@@ -14,7 +14,7 @@ Included too :
    (added in the service definition on the Terraform script)
 
 ## Introduction :
-<p>Once our AWS EKS Kubernetes cluster is up (see how : [themaire/ecf_eks_terraform](https://github.com/themaire/ecf_eks_terraform/)) and the nodejs demo app is Dockerizez (see how : [themaire/ecf_eks_terraform](https://github.com/themaire/ecf_bancash_back/)), we can now deploy the app on the cluster.</p>
+<p>Once our AWS EKS Kubernetes cluster is up (see how : https://github.com/themaire/ecf_eks_terraform/) and the nodejs demo app is Dockerizez (see how : https://github.com/themaire/ecf_bancash_back/), we can now deploy the app on the cluster.</p>
 
 ### What I done :
 
