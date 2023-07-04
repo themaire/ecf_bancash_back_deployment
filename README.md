@@ -45,7 +45,7 @@ terraform apply
 ```
 
 # Screenshots
-The deployment is seen in the console. In the status, the two replicas are "ready".
+The deployment is seen in the console. In the status, the two pods are "ready".
 ![ScreenShot](img/console_deployment.png.png)
 
 
