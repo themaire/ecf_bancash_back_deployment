@@ -1,52 +1,14 @@
-terraform {
-  required_providers {
-    aws = {
-      source = "hashicorp/aws"
-      version = "5.5.0"
-    }
-  }
-
-  required_version = ">= 1.2.0"
-}
-
-provider "aws" {
-  region = "us-west-2"
-}
-
 # Deployment and service declaration to the cluster
 ## Source inspiration : https://github.com/shivalkarrahul/DevOps/blob/master/aws/terraform/terraform-kubernetes-deployment/nodejs-application/
 ## Majors subsetps :
 # 1_ : Create a namespace
 # 2_ : Deploy our Docker image
-# 3_ : Serve the NestJS app names ecf_bancask_back
+# 3_ : Serve the NestJS app : ecf_bancask_back
 # 4_ : Done!! >:-)
-
-provider "kubernetes" {
-  config_path    = "~/.kube/config"
-
-}
-
-resource "kubernetes_namespace" "this" {
-  metadata {
-    name = "bancash"
-  }
-}
-
-# Create variables from terraform.tfvars file. 
-variable "secret_database_name" {
-  type        = string
-}
-variable "secret_user" {
-  type        = string
-}
-variable "secret_password" {
-  type        = string
-}
 
 resource "kubernetes_deployment" "this" {
   metadata {
     name      = "ecf-bancash-back"
-    namespace = kubernetes_namespace.this.metadata.0.name
   }
   spec {
     replicas = 2
@@ -56,7 +18,7 @@ resource "kubernetes_deployment" "this" {
       }
     }
 
-	strategy {
+	  strategy {
       type = "Recreate"
     }
 
@@ -64,7 +26,7 @@ resource "kubernetes_deployment" "this" {
       metadata {
         labels = {
           app = "ecf-bancash-back"
-		  name = "ecf-bancash-back"
+	    	  name = "ecf-bancash-back"
         }
       }
       spec {
@@ -72,7 +34,7 @@ resource "kubernetes_deployment" "this" {
           image = "071170175291.dkr.ecr.us-west-2.amazonaws.com/studi/ecf_bancask_back:latest"
           name  = "ecf-bancash-back-container"
 
-		  liveness_probe {
+		      liveness_probe {
             tcp_socket {
               port = 3000
             }
@@ -96,13 +58,6 @@ resource "kubernetes_deployment" "this" {
             timeout_seconds       = 2
           }
 
-        #   resources {
-        #     limits {
-        #       cpu    = "200m"
-        #       memory = "256M"
-        #     }
-        #   }
-
           port {
             name           = "http"
             container_port = 3000
@@ -110,28 +65,41 @@ resource "kubernetes_deployment" "this" {
           }
 
           env {
-              name  = "PGDATABASE"
-              value = var.secret_database_name
+            name = "PGDATABASE"
+            value_from {
+              secret_key_ref {
+                name = "postgres-creds"
+                key = "PGDATABASE"
+              }
+            }
           }
           env {
-              name  = "PGUSER"
-              value = var.secret_user
-          }
-		      env {
-              name  = "PGPASSWORD"
-              value = var.secret_password
+            name = "PGPASSWORD"
+            value_from {
+              secret_key_ref {
+                name = "postgres-creds"
+                key = "PGPASSWORD"
+              }
             }
-
+          }
+          env {
+            name = "PGUSER"
+            value_from {
+              secret_key_ref {
+                name = "postgres-creds"
+                key = "PGUSER"
+              }
+            }
+          }
         }
-      }
-  	}
+  	  }
+    }
   }
 }
 
 resource "kubernetes_service" "this" {
   metadata {
     name      = "ecf-bancash-back"
-    namespace = kubernetes_namespace.this.metadata.0.name
   }
   spec {
     selector = {
