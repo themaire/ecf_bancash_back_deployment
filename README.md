@@ -83,7 +83,7 @@ Then, i tested the aivability of the app with a simple curl command line.
 NestJS demo application on a Kubernetes cluster deployed on the cloud is working! Well done! 😎
 ![ScreenShot](img/hello_world_nestjs.png)
 
-Look, my secrets han't no secrets for you. 😙
+Look, my secrets havn't no secrets for you. 😙
 ![Alt text](img/secrets_in_k8s.png)
 
 Proof of evironment variables works with internal Kubernetes secrets manager.
