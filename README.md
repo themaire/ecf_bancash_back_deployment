@@ -78,7 +78,7 @@ Look, my secrets havn't no secrets for you. 😙
 ![Alt text](img/secrets_in_k8s.png)
 
 Proof of evironment variables works with internal Kubernetes secrets manager.
-To demonstrate, i was connected to a pod (on AWS!). You can see the three echo(s).
+To demonstrate, i was connected to a terminal console pod (on AWS!). You can see the three echo(s).
 ![ScreenShot](img/proof_k8s_secret_env.png)
 
 # Deployment complete!
