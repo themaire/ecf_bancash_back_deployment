@@ -1,10 +1,26 @@
 # Deployment and service declaration to the cluster
 ## Source inspiration : https://github.com/shivalkarrahul/DevOps/blob/master/aws/terraform/terraform-kubernetes-deployment/nodejs-application/
 ## Majors subsetps :
-# 1_ : Create a namespace
+# 1_ : Send a secret named "postgres-creds" via 'kubectl' command line tool
 # 2_ : Deploy our Docker image
 # 3_ : Serve the NestJS app : ecf_bancask_back
 # 4_ : Done!! >:-)
+
+resource "null_resource" "send_secrets" {
+	
+	  provisioner "local-exec" {
+	    command = <<EOT
+      kubectl create secret generic postgres-creds \
+      --from-file=PGDATABASE=./secrets/PGDATABASE.txt \
+      --from-file=PGPASSWORD=./secrets/PGPASSWORD.txt \
+      --from-file=PGUSER=./secrets/PGUSER.txt
+      EOT
+    }
+	  
+    triggers = {
+	    "run_at" = timestamp()
+	  }
+}
 
 resource "kubernetes_deployment" "this" {
   metadata {
@@ -64,6 +80,9 @@ resource "kubernetes_deployment" "this" {
             protocol       = "TCP"
           }
 
+          ####
+          #@@@@@@ Using secrets sent by kubectl command line tool
+          ####
           env {
             name = "PGDATABASE"
             value_from {
@@ -95,6 +114,11 @@ resource "kubernetes_deployment" "this" {
   	  }
     }
   }
+
+  depends_on = [
+	    null_resource.send_secrets,
+	  ]
+
 }
 
 resource "kubernetes_service" "this" {

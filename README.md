@@ -14,38 +14,28 @@ Included too :
    (added in the service definition on the Terraform script)
 
 ## Introduction :
-<p>Once our AWS EKS Kubernetes cluster is up (see how : https://github.com/themaire/ecf_eks_terraform/) and the nodejs demo app is Dockerizez (see how : https://github.com/themaire/ecf_bancash_back/), we can now deploy the app on the cluster.</p>
+<p>Works only when our AWS EKS Kubernetes cluster is up (see how : https://github.com/themaire/ecf_eks_terraform/) and the nodejs demo app is Dockerized (see how : https://github.com/themaire/ecf_bancash_back/), we can now deploy the app on the cluster.</p>
 
 ### What I done :
 
 <p>
 In the Terraform's main.tf I followed theses steps :
 
-1. : Create a namespace<br><br>
-Helped by kubernetes_namespace Terraform's ressource.<br><br>
-
-2. :
+1. :
 Create Kubernetes secret "by hand" following this official documentation link :<br>https://kubernetes.io/docs/tasks/configmap-secret/managing-secret-using-kubectl/<br>
 
-Steps i done 'by hand' in the default namespace :
+Store localy for the ""<b>EXEMPLE</b>"" in the default namespace :
 
 ```
-# Store Postresql credentials in files :
-# !! Data will be encoded in base64 by kubectl
+# Store Postresql credentials in local files (again, for the exemple) :
+# * Data will be encoded in base64 by kubectl
+mkdir ./secrets
 echo -n 'dbo' > ./secrets/PGDATABASE.txt
 echo -n 'no_pain/no_gain' > ./secrets/PGPASSWORD.txt
 echo -n 'postgres' > ./secrets/PGUSER.txt
 ```
-```
-# Pass the file paths in the kubectl command :
-kubectl create secret generic postgres-creds \
-    --from-file=PGDATABASE=./secrets/PGDATABASE.txt \
-    --from-file=PGPASSWORD=./secrets/PGPASSWORD.txt \
-    --from-file=PGUSER=./secrets/PGUSER.txt
-```
 
-
-3. : Deploy our Docker image<br><br>
+2. : Deploy our Docker image<br><br>
 The kubernetes_deployment Terraform's ressource describes here several important informations lile the size of replicas in pods, witch Docker image is used, the container's application port and various container's environments variable (stored previosly in cluster's secrets) to provide a PostgreSQL database connexion as asked.<br><br>
 
 
@@ -66,18 +56,18 @@ terraform apply
 ```
 
 # Screenshots
-The deployment is seen in the console. In the status, the two pods are "ready".
+The deployment is well present and seen in the console. In the status, the two pods wanted are "ready".
 ![ScreenShot](img/console_deployment.png.png)
 
 
-As the deployment, service wanted is also seen in the console.
+As the deployment, service wanted too is also seen in the console.
 ![ScreenShot](img/console_service.png)
 
-Load balancer for the cluster. Url marked in red for the access to the deployed app.
+<b>Public kuster's endpoint.</b> Load balancer for the cluster. Url marked in red for the access to the deployed app.
 ![ScreenShot](img/console_loadbalancer.png)
 
 End of the Terraform's output. Deployment and service added with success.
-Then, i tested the aivability of the app with a simple curl command line.
+Then, i tested the availability of the app with a simple curl command line.
 ![ScreenShot](img/app_deployment_finished_curl_proof.png)
 
 NestJS demo application on a Kubernetes cluster deployed on the cloud is working! Well done! 😎

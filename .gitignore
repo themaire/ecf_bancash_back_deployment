@@ -41,4 +41,4 @@ terraform.tfstate.backup
 
 img/.*
 
-secrets/
+secrets/*
