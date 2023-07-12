@@ -56,7 +56,7 @@ terraform apply
 ```
 
 # Screenshots
-The deployment is well present and seen in the console. In the status, the two pods wanted are "ready".
+Just after "terraform apply" command is done, the deployment is well present and seen in the console. In the status, the two pods wanted are "ready".
 ![ScreenShot](img/console_deployment.png.png)
 
 
